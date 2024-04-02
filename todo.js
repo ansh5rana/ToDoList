@@ -52,58 +52,43 @@ function editTask(taskItem) {
     let taskTextElement = taskItem.querySelector('span');
     let originalText = taskTextElement.innerText;
 
-    // Create an input field with the text of the task
     let input = document.createElement('input');
     input.type = 'text';
     input.value = originalText;
-    input.className = 'editInput'; // Make sure this class is defined in your CSS
+    input.className = 'editInput';
 
-    // Replace the task text with the input field
     taskItem.replaceChild(input, taskTextElement);
     input.focus();
 
-    // Function to revert to displaying the task as text
     const revertToText = () => {
         let newText = input.value.trim();
-        if (!newText) { // Prevent saving empty task
-            newText = originalText; // Revert to original text if new text is empty
+        if (!newText) { 
+            newText = originalText;
         }
         taskTextElement.innerText = newText;
         taskItem.replaceChild(taskTextElement, input);
-        saveTasks(); // Update local storage with the new task list
+        saveTasks(); 
     };
-
-    // Save the edit when the "Enter" key is pressed
+    
     input.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault(); 
             revertToText();
         }
     });
-
-    // Also save the edit when the input loses focus (blur event)
     input.addEventListener('blur', revertToText);
 }
 
 
 
 function saveEditedTask(taskItem, newText) {
-    // Create a new span element with the updated text
     const newSpan = document.createElement('span');
     newSpan.innerText = newText;
-
-    // Find the input element in the task item
     const input = taskItem.querySelector('input.editInput');
-
-    // Re-apply the 'completed' class to the new span if it was previously marked as complete
     if (input && input.nextSibling.querySelector('p').innerText.includes('Mark as Incomplete')) {
         newSpan.classList.add('completed');
     }
-
-    // Replace the input with the new span
     taskItem.replaceChild(newSpan, input);
-
-    // Update the task list in local storage
     saveTasks();
 }
 
